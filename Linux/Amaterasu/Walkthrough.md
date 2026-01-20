@@ -79,7 +79,7 @@ Unfortunately couldn't browse the service, so nothing here
 
 Browsing to port 33414 the page is no longer there
 
-![[Screenshot_2026-01-20_11-40-51.png]]
+![Alt text](./screenshots/Screenshot_2026-01-20_11-40-51.png)
 
 Using ffuf to enumerate directories, we discover 2 API endpoints `/help` and `/info`
 
