@@ -114,11 +114,11 @@ info                    [Status: 200, Size: 98, Words: 14, Lines: 2, Duration: 1
 The `/help` endpoint shows we can make a GET request to `/file-list` with a query parameter `dir=/tmp` that list files in the `/tmp` directory on the server. 
 It also shows we can upload files to the server with the POST request
 
-![[Screenshot_2026-01-20_11-55-08.png]]
+![Alt text](./screenshots/Screenshot_2026-01-20_11-55-08.png)
 
 The `/info` endpoint shows a name Alfredo Moroder most likely the developer
 
-![[Screenshot_2026-01-20_11-55-36.png]]
+![Alt text](./screenshots/Screenshot_2026-01-20_11-55-36.png)
 
 Let's see if we can use curl to see the contents of the `/tmp` directory
 
@@ -236,7 +236,7 @@ Then upload it to the .ssh directory
 {"message":"File successfully uploaded"}
 ```
 
-![[Screenshot_2026-01-20_14-25-46.png]]
+![Alt text](./screenshots/Screenshot_2026-01-20_11-25-46.png)
 
 Now to the same with the private key 
 
@@ -244,12 +244,11 @@ Now to the same with the private key
 curl -X POST --form "file=@alf_rsa.txt" --form "filename=/home/alfredo/.ssh/alf_rsa" http://192.168.150.249:33414/file-upload                                                                                                                        
 {"message":"File successfully uploaded"}
 ```
-
-![[Screenshot_2026-01-20_14-47-40.png]]
+![Alt text](./screenshots/Screenshot_2026-01-20_11-47-40.png)
 
 Now to use ssh to login
 
-![[Screenshot_2026-01-20_14-55-51.png]]
+![Alt text](./screenshots/Screenshot_2026-01-20_11-55-51.png)
 
 # Privilege Escalation
 
@@ -309,7 +308,7 @@ Looks like we do. Now we can write a siple one-liner to change our user to root 
 
 Then we wait for a minute and run `/bin/bash -p` and now we are the root user
 
-![[Screenshot_2026-01-20_15-20-48.png]]
+![Alt text](./screenshots/Screenshot_2026-01-20_11-20-48.png)
 
 Fully ROOTED!!
 
